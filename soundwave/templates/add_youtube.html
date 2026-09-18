@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Add from YouTube — Cadence{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Add a track from YouTube</h1>
+  <p class="muted">Paste any YouTube video link — Cadence plays it right in the same player, alongside your uploads.</p>
+</div>
+
+<div class="form-card">
+  <form method="POST" class="stacked-form">
+    <label>YouTube link or video ID
+      <input type="text" name="youtube_url" required placeholder="https://www.youtube.com/watch?v=...">
+    </label>
+    <div class="form-grid">
+      <label>Title <span class="muted small">(optional)</span>
+        <input type="text" name="title" placeholder="e.g. Lo-fi Study Mix">
+      </label>
+      <label>Artist / Channel <span class="muted small">(optional)</span>
+        <input type="text" name="artist" placeholder="e.g. Chillhop Music">
+      </label>
+    </div>
+    <button type="submit" class="btn-primary full">Add track</button>
+  </form>
+</div>
+
+<div class="info-card">
+  <strong>How playback works:</strong>
+  <p class="muted">YouTube tracks stream through YouTube's own embedded player behind the scenes, so it counts as a normal YouTube view. Everything else — play/pause, next, previous, volume, queue — works exactly the same as your uploaded songs.</p>
+</div>
+{% endblock %}

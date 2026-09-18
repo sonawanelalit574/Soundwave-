@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m with context %}
+{% block title %}{{ playlist.name }} — Cadence{% endblock %}
+{% block content %}
+<div class="page-header liked-header">
+  <div class="liked-hero playlist-hero">{{ playlist.name[0]|upper }}</div>
+  <div>
+    <span class="eyebrow-plain">Playlist</span>
+    <h1>{{ playlist.name }}</h1>
+    <p class="muted">{{ songs|length }} track{{ 's' if songs|length != 1 else '' }}{% if playlist.description %} · {{ playlist.description }}{% endif %}</p>
+  </div>
+  <form action="{{ url_for('delete_playlist', playlist_id=playlist.id) }}" method="POST" onsubmit="return confirm('Delete this playlist? Tracks stay in your library.');" class="playlist-delete-form">
+    <button type="submit" class="btn-secondary danger">Delete playlist</button>
+  </form>
+</div>
+
+{% if songs %}
+<div class="song-list" data-scope="playlist:{{ playlist.id }}">
+  {% for song in songs %}
+    {{ m.song_row(song, liked_ids, show_remove_from=playlist.id, index=loop.index) }}
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <p>This playlist is empty. Add tracks from your library below.</p>
+</div>
+{% endif %}
+
+<section class="section">
+  <div class="section-heading"><h2>Add tracks to this playlist</h2></div>
+  <div class="song-list" data-scope="none">
+    {% for song in all_songs %}
+      {% if song not in songs %}
+      <div class="song-row add-row">
+        <div class="song-row-cover">
+          {% if song.source_type == 'youtube' %}
+            <img src="https://img.youtube.com/vi/{{ song.youtube_id }}/default.jpg" alt="">
+            <span class="badge-yt">YT</span>
+          {% elif song.cover_filename %}
+            <img src="{{ url_for('static', filename='covers/' ~ song.cover_filename) }}" alt="">
+          {% else %}
+            <span class="cover-fallback">♪</span>
+          {% endif %}
+        </div>
+        <div class="song-row-text">
+          <div class="song-row-title">{{ song.title }}</div>
+          <div class="song-row-artist">{{ song.artist }}</div>
+        </div>
+        <form action="{{ url_for('add_to_playlist', playlist_id=playlist.id, song_id=song.id) }}" method="POST">
+          <button type="submit" class="btn-secondary small">Add</button>
+        </form>
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

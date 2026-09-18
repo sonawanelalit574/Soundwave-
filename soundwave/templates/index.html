@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m with context %}
+{% block title %}Cadence — Home{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>{% if query %}Results for "{{ query }}"{% else %}Good to see you, {{ current_user.display_name or current_user.username }}{% endif %}</h1>
+  {% if not query %}<p class="muted">Fresh uploads and YouTube tracks from everyone on Cadence.</p>{% endif %}
+</div>
+
+{% if not query %}
+<section class="quick-actions">
+  <a href="{{ url_for('upload') }}" class="quick-card upload-card">
+    <div class="quick-icon">⬆</div>
+    <div>
+      <div class="quick-title">Upload a track</div>
+      <div class="quick-sub muted">MP3, WAV, OGG, M4A, FLAC</div>
+    </div>
+  </a>
+  <a href="{{ url_for('add_youtube') }}" class="quick-card youtube-card">
+    <div class="quick-icon">▶</div>
+    <div>
+      <div class="quick-title">Add from YouTube</div>
+      <div class="quick-sub muted">Paste any video link</div>
+    </div>
+  </a>
+  <a href="{{ url_for('liked_songs_page') }}" class="quick-card liked-card">
+    <div class="quick-icon">♥</div>
+    <div>
+      <div class="quick-title">Liked Songs</div>
+      <div class="quick-sub muted">Your saved favorites</div>
+    </div>
+  </a>
+</section>
+
+{% if my_songs %}
+<section class="section">
+  <div class="section-heading">
+    <h2>Your uploads</h2>
+  </div>
+  <div class="song-list" data-scope="mine">
+    {% for song in my_songs[:6] %}
+      {{ m.song_row(song, liked_ids, show_delete=True, index=loop.index) }}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endif %}
+
+<section class="section">
+  <div class="section-heading">
+    <h2>{% if query %}All matching tracks{% else %}Discover · latest on Cadence{% endif %}</h2>
+  </div>
+  {% if songs %}
+  <div class="song-list" data-scope="{% if query %}q:{{ query }}{% else %}all{% endif %}">
+    {% for song in songs %}
+      {{ m.song_row(song, liked_ids, show_delete=(song.uploader_id == current_user.id), index=loop.index) }}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p>{% if query %}No tracks matched your search.{% else %}No tracks yet — be the first to upload one!{% endif %}</p>
+  </div>
+  {% endif %}
+</section>
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m with context %}
+{% block title %}Liked Songs — Cadence{% endblock %}
+{% block content %}
+<div class="page-header liked-header">
+  <div class="liked-hero">♥</div>
+  <div>
+    <span class="eyebrow-plain">Playlist</span>
+    <h1>Liked Songs</h1>
+    <p class="muted">{{ songs|length }} track{{ 's' if songs|length != 1 else '' }}</p>
+  </div>
+</div>
+
+{% if songs %}
+<div class="song-list" data-scope="liked">
+  {% for song in songs %}
+    {{ m.song_row(song, liked_ids, index=loop.index) }}
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <p>Songs you like will show up here. Tap the heart on any track to save it.</p>
+</div>
+{% endif %}
+{% endblock %}

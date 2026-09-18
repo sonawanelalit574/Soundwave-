@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Upload — Cadence{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Upload a track</h1>
+  <p class="muted">Drop in an audio file — Cadence reads the title, artist and album straight from the file's tags when it can.</p>
+</div>
+
+<div class="form-card">
+  <form method="POST" enctype="multipart/form-data" class="stacked-form">
+    <label class="file-drop" id="fileDrop">
+      <input type="file" name="audio_file" id="audioInput" accept=".mp3,.wav,.ogg,.m4a,.flac" required>
+      <div class="file-drop-inner">
+        <span class="file-drop-icon">⬆</span>
+        <span id="fileDropText">Choose an audio file or drag it here</span>
+        <span class="muted small">MP3, WAV, OGG, M4A or FLAC · up to 60MB</span>
+      </div>
+    </label>
+
+    <div class="form-grid">
+      <label>Title <span class="muted small">(optional — auto-detected if left blank)</span>
+        <input type="text" name="title" placeholder="e.g. Midnight Drive">
+      </label>
+      <label>Artist <span class="muted small">(optional)</span>
+        <input type="text" name="artist" placeholder="e.g. Nova Ray">
+      </label>
+      <label>Album <span class="muted small">(optional)</span>
+        <input type="text" name="album" placeholder="e.g. Neon Hours">
+      </label>
+      <label>Cover image <span class="muted small">(optional)</span>
+        <input type="file" name="cover_file" accept=".png,.jpg,.jpeg,.webp">
+      </label>
+    </div>
+
+    <button type="submit" class="btn-primary full">Upload track</button>
+  </form>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  const input = document.getElementById('audioInput');
+  const text = document.getElementById('fileDropText');
+  input.addEventListener('change', () => {
+    if (input.files.length) text.textContent = input.files[0].name;
+  });
+  const drop = document.getElementById('fileDrop');
+  ['dragover', 'dragleave', 'drop'].forEach(evt => {
+    drop.addEventListener(evt, e => e.preventDefault());
+  });
+  drop.addEventListener('dragover', () => drop.classList.add('dragging'));
+  drop.addEventListener('dragleave', () => drop.classList.remove('dragging'));
+  drop.addEventListener('drop', e => {
+    drop.classList.remove('dragging');
+    if (e.dataTransfer.files.length) {
+      input.files = e.dataTransfer.files;
+      text.textContent = e.dataTransfer.files[0].name;
+    }
+  });
+</script>
+{% endblock %}

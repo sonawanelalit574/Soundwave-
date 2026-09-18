@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Sign up — Cadence{% endblock %}
+{% block auth_content %}
+<div class="auth-page">
+  <div class="auth-panel">
+    <div class="auth-brand">
+      <span class="brand-mark">C</span>
+      <span class="brand-name">Cadence</span>
+    </div>
+    <h1>Create your account</h1>
+    <p class="muted">Free forever. Upload your own tracks or pull in anything from YouTube.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="flash-stack">
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="auth-form">
+      <label>Display name
+        <input type="text" name="display_name" placeholder="How should we greet you?" maxlength="120">
+      </label>
+      <label>Username
+        <input type="text" name="username" required placeholder="Pick a unique username" maxlength="80">
+      </label>
+      <label>Email
+        <input type="email" name="email" required placeholder="you@example.com">
+      </label>
+      <label>Password
+        <input type="password" name="password" required minlength="6" placeholder="At least 6 characters">
+      </label>
+      <label>Confirm password
+        <input type="password" name="confirm" required minlength="6" placeholder="Repeat your password">
+      </label>
+      <button type="submit" class="btn-primary full">Create account</button>
+    </form>
+
+    <p class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+  </div>
+  <div class="auth-visual">
+    <div class="visual-bars">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <p class="visual-quote">"Your library. Your uploads. Your YouTube finds. All in one player."</p>
+  </div>
+</div>
+{% endblock %}

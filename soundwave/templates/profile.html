@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Profile — Cadence{% endblock %}
+{% block content %}
+<div class="page-header liked-header">
+  <div class="liked-hero profile-hero">{{ current_user.initials() }}</div>
+  <div>
+    <span class="eyebrow-plain">Profile</span>
+    <h1>{{ current_user.display_name or current_user.username }}</h1>
+    <p class="muted">@{{ current_user.username }} · {{ current_user.email }}</p>
+  </div>
+</div>
+
+<section class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-num">{{ song_count }}</div>
+    <div class="stat-label muted">Tracks uploaded</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">{{ playlist_count }}</div>
+    <div class="stat-label muted">Playlists</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">{{ liked_count }}</div>
+    <div class="stat-label muted">Liked songs</div>
+  </div>
+</section>
+
+<div class="info-card">
+  <strong>Member since</strong>
+  <p class="muted">{{ current_user.created_at.strftime('%B %d, %Y') }}</p>
+</div>
+{% endblock %}

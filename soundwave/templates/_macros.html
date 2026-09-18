@@ -1,0 +1,74 @@
+{% macro song_row(song, liked_ids, show_playlist_add=True, show_remove_from=None, show_delete=False, index=None) %}
+<div class="song-row"
+     data-id="{{ song.id }}"
+     data-title="{{ song.title }}"
+     data-artist="{{ song.artist }}"
+     data-source="{{ song.source_type }}"
+     data-youtube-id="{{ song.youtube_id or '' }}"
+     {% if song.source_type == 'upload' %}data-stream="{{ url_for('stream', filename=song.filename) }}"{% endif %}
+     data-cover="{% if song.source_type == 'youtube' %}https://img.youtube.com/vi/{{ song.youtube_id }}/hqdefault.jpg{% elif song.cover_filename %}{{ url_for('static', filename='covers/' ~ song.cover_filename) }}{% else %}{% endif %}">
+  <div class="song-row-index">
+    {% if index %}<span class="idx-num">{{ index }}</span>{% endif %}
+    <button class="row-play-btn" title="Play">
+      <svg viewBox="0 0 24 24" class="icon small"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+  </div>
+  <div class="song-row-cover">
+    {% if song.source_type == 'youtube' %}
+      <img src="https://img.youtube.com/vi/{{ song.youtube_id }}/default.jpg" alt="">
+      <span class="badge-yt">YT</span>
+    {% elif song.cover_filename %}
+      <img src="{{ url_for('static', filename='covers/' ~ song.cover_filename) }}" alt="">
+    {% else %}
+      <span class="cover-fallback">♪</span>
+    {% endif %}
+  </div>
+  <div class="song-row-text">
+    <div class="song-row-title">{{ song.title }}</div>
+    <div class="song-row-artist">{{ song.artist }}{% if song.album %} · {{ song.album }}{% endif %}</div>
+  </div>
+  <div class="song-row-meta muted small">{{ song.uploader.display_name or song.uploader.username }}</div>
+  <div class="song-row-actions">
+    <button class="icon-btn like-toggle {% if song.id in liked_ids %}liked{% endif %}" data-song-id="{{ song.id }}" title="Save to Liked Songs">
+      <svg viewBox="0 0 24 24" class="icon small"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.1 2 4.5 5.6 4c2-.3 3.9.6 5 2.2C11.7 4.6 13.6 3.7 15.6 4c3.6.5 5.2 4.1 3.6 7.7C17.5 16.4 12 21 12 21z"/></svg>
+    </button>
+
+    {% if show_playlist_add %}
+    <div class="dropdown">
+      <button class="icon-btn" title="Add to playlist">
+        <svg viewBox="0 0 24 24" class="icon small"><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v4h-2v-4h-4v4h6v6h2v-6h4v-2h-4V6h-2z"/></svg>
+      </button>
+      <div class="dropdown-menu">
+        {% for pl in current_user.playlists %}
+        <form action="{{ url_for('add_to_playlist', playlist_id=pl.id, song_id=song.id) }}" method="POST">
+          <button type="submit">{{ pl.name }}</button>
+        </form>
+        {% else %}
+        <span class="dropdown-empty">No playlists yet</span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if show_remove_from %}
+    <form action="{{ url_for('remove_from_playlist', playlist_id=show_remove_from, song_id=song.id) }}" method="POST">
+      <button type="submit" class="icon-btn" title="Remove from playlist">
+        <svg viewBox="0 0 24 24" class="icon small"><path d="M19 13H5v-2h14v2z"/></svg>
+      </button>
+    </form>
+    {% endif %}
+
+    {% if show_delete %}
+    <form action="{{ url_for('delete_song', song_id=song.id) }}" method="POST" onsubmit="return confirm('Delete this track permanently?');">
+      <button type="submit" class="icon-btn danger" title="Delete track">
+        <svg viewBox="0 0 24 24" class="icon small"><path d="M6 7h12l-1 13H7L6 7zm3-3h6l1 2H8l1-2z"/></svg>
+      </button>
+    </form>
+    {% endif %}
+
+    <span class="duration muted small">
+      {% if song.duration %}{{ (song.duration // 60) }}:{{ '%02d' % (song.duration % 60) }}{% else %}--:--{% endif %}
+    </span>
+  </div>
+</div>
+{% endmacro %}
